@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Button Ripple</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column; 
+            background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
+        }
+        button{
+            width: 35%;
+            padding: 13px 16px;
+            border-radius: 10px;
+            border:none;
+            outline:none;
+            cursor: pointer;
+            background: #33FFCC;
+            color:#fff;
+            font-size: 20px;
+            box-shadow: 2px 5px 15px rgba(255, 255, 255, .4);
+            transition: .1s all;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+        button:active{
+            transform: translate(-2px, 8px);
+            box-shadow: 2px 5px 20px rgba(255, 255, 255, .8);
+        }
+        .ripple1{
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            animation: animationRipple 1s linear;
+            background: rgba(243, 9, 9, 0.705);
+            transform: translate(-50%, -50%);
+        }
+        @keyframes animationRipple{
+            100%{
+                width:200px;
+                height: 200px;
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button>Button ripple</button>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            var btn1=document.querySelector("button:nth-child(1");
+            function createRipple(btn, event){
+                var ripple1=document.createElement("div");
+                ripple1.classList.add("ripple1");
+                let x, y;
+                x=event.clientX - btn.offsetLeft;
+                y=event.clinetY - btn.offsetTop;
+                ripple1.style.left= x + "px";
+                ripple1.style.top= y + "px";
+                btn.appendChild(ripple1);
+                return ripple1;
+            }
+            btn1.addEventListener("click", event=>{
+                var ripple1=createRipple(btn1, event);
+                setTimeout(()=>{
+                    ripple1.remove();
+                },1500)
+            })
+            var hover=true;
+            btn1.addEventListener("mouseover", event=>{
+                if(hover){
+                    hover=false;
+                    var ripple1=createRipple(btn1, event);
+                    setTimeout(()=>{
+                        ripple1.remove();
+                    },1500);
+                    setTimeout(() => {
+                        hover=true;
+                    }, 100);
+                }
+                
+            })
+        })
+    </script>  
+</body>
+</html>
