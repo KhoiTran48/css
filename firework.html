@@ -9,34 +9,109 @@
         body{
             margin: 0;
             padding: 0;
-            height: 100vh;
             overflow: hidden;
             background: black;
+        }
+        canvas{
+            position: absolute;
+            z-index: -1;
+        }
+        .control{
+            position: absolute;
+            left:0;
+            bottom: 0;
+            margin:40px 20px;
+        }
+        button{
+            background: #FF530D;
+            padding: 8px 16px;
+            border:none;
+            border-radius: 5px;
+            margin-left: 10px;
+            color:#fff;
+            cursor: pointer;
+        }
+        .control div{
+            margin :20px 0;
+            position: relative;
+        }
+        label{
+            position: absolute;
+            color:#fff;
+            bottom: 6px;
+            left:110%;
         }
     </style>
 </head>
 <body>
     <canvas></canvas>
-
+    <div class="control">
+        <button id="btn">Reset Config</button>
+        <div>
+            <input id="size" type="range" min="1" max="5" value="3"  step=".1">
+            <label for="">Size</label>
+        </div>
+        <div>
+            <input id="number" type="range" min="1" max="40" value="20"  step="1">
+            <label for="">Number</label>
+        </div>
+        <div>
+            <input id="fill" type="range" min="1" max="5" value="1"  step="1">
+            <label for="">Fill</label>
+        </div>
+    </div>
     <script>
         document.addEventListener('DOMContentLoaded',function(){
             var canvas=document.querySelector('canvas');
             var c=canvas.getContext('2d');
             canvas.width=window.innerWidth;
             canvas.height=window.innerHeight;
+
+            var size=document.querySelector("#size");
+            var number=document.querySelector("#number");
+            var fill=document.querySelector("#fill");
+            var btn=document.querySelector("#btn");
+
+            const arrColor=['#FFFE15', '#E88D0C', '#FF0000', '#6C0CE8', '#0DA9FF'];
+            var config={
+                size:3,
+                number:20,
+                fill:.1
+            }
+
+            size.addEventListener("change", function(){
+                config.size=size.value;
+            })
+            number.addEventListener("change", function(){
+                config.number=number.value;
+            })
+            fill.addEventListener("change", function(){
+                config.fill='.' + fill.value;
+            })
+
+            btn.addEventListener("click", function(){
+                config={
+                    size:3,
+                    number:20,
+                    fill:.1
+                }
+                size.value=3;
+                number.value=20;
+                fill.value=1;
+            })
             
             document.addEventListener('resize', function(){
                 canvas.width=window.innerWidth;
                 canvas.height=window.innerHeight;
             })
-            const arrColor=['#FFFE15', '#E88D0C', '#FF0000', '#6C0CE8', '#0DA9FF'];
-
+            
+            
             // start firework
             function Firework(){
                 // console.log('constructor');
                 this.x= canvas.width /2;
                 this.y= canvas.height;
-                this.radius=Math.random() *5;
+                this.radius=config.size;
                 // this.radius=5;
                 this.life=  true;
                 this.maxY=  canvas.height /4;
@@ -108,13 +183,13 @@
             var arrFirework=[];
             var arrSpark=[];
             function init(){
-                if(arrFirework.length <=20){
+                if(arrFirework.length <=config.number){
                     arrFirework.push(new Firework());
                  }
             }
             function animate(){
                 window.requestAnimationFrame(animate);
-                c.fillStyle="rgba(0, 0, 0, .1)";
+                c.fillStyle=`rgba(0, 0, 0, ${config.fill})`;
                 c.fillRect(0, 0, canvas.width, canvas.height);
                 init();
                 arrFirework.forEach((item, index)=>{
