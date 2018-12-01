@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Canvas Mouse Effect</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: #111;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            var canvas=document.createElement('canvas');
+            var c=canvas.getContext('2d');
+            document.body.appendChild(canvas);
+
+            canvas.width=window.innerWidth;
+            canvas.height=window.innerHeight;
+            document.addEventListener('resize', function(){
+                canvas.width=window.innerWidth;
+                canvas.height=window.innerHeight;
+            })
+            
+            var mouseClick=true;
+            document.addEventListener('click', function(){
+                mouseClick=!mouseClick;
+            })
+            var mouse={
+                x:undefined,
+                y:undefined
+            }
+
+            document.addEventListener('mousemove', function(e){
+                mouse.x=e.clientX;
+                mouse.y=e.clientY;
+            })
+
+            function Circle(x, y, color){
+                this.x=x;
+                this.y=y;
+                this.radius=5;
+                this.color=color;
+                this.velocity={
+                    x: Math.random()*4 -2,
+                    y: Math.random()*4 -2
+                }
+                this.lifeTime=20;
+                this.opacity=.9;
+            }
+            Circle.prototype.draw=function(){
+                c.beginPath();
+                    c.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                    c.fillStyle=`rgba(${this.color}, ${this.opacity}`;
+                    c.fill();
+                c.closePath();
+            }
+            Circle.prototype.update=function(){
+                this.lifeTime -=1;
+                this.x += this.velocity.x;
+                this.y += this.velocity.y;
+                this.opacity-= .015;
+                this.draw();
+            }
+            const arrColor=["128,255,41", "232,161,12", "255,0,0", "57,12,232", "13,255,229"];
+            function randomColor(){
+                return arrColor[Math.floor(Math.random()*arrColor.length)];
+            }
+            
+            var arrCircle=[];
+            function init(){
+                for(let i=0; i<20; i++){
+                    arrCircle.push(new Circle( mouse.x, mouse.y, randomColor()))
+                }
+            }
+            function animate(){
+                window.requestAnimationFrame(animate);
+                c.fillStyle="rgba(0, 0, 0, .1)";
+                if(mouseClick){
+                    c.clearRect(0, 0, canvas.width, canvas.height);
+                }else{
+                    c.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                init();
+                
+                arrCircle.forEach((item, index)=>{
+                    if(item.lifeTime <=0){
+                        arrCircle.splice(index, 1);
+                    }
+                    item.update();
+                })
+            }
+
+            animate();
+        })
+    </script>
+</body>
+</html>
