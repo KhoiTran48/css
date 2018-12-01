@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Canvas Firework</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background: black;
+        }
+    </style>
+</head>
+<body>
+    <canvas></canvas>
+
+    <script>
+        document.addEventListener('DOMContentLoaded',function(){
+            var canvas=document.querySelector('canvas');
+            var c=canvas.getContext('2d');
+            canvas.width=window.innerWidth;
+            canvas.height=window.innerHeight;
+            
+            document.addEventListener('resize', function(){
+                canvas.width=window.innerWidth;
+                canvas.height=window.innerHeight;
+            })
+            const arrColor=['#FFFE15', '#E88D0C', '#FF0000', '#6C0CE8', '#0DA9FF'];
+
+            // start firework
+            function Firework(){
+                // console.log('constructor');
+                this.x= canvas.width /2;
+                this.y= canvas.height;
+                this.radius=Math.random() *5;
+                // this.radius=5;
+                this.life=  true;
+                this.maxY=  canvas.height /4;
+                this.color= arrColor[Math.floor(Math.random()*arrColor.length)];
+                // this.color="#fff";
+                this.velocity={
+                    x:  Math.random()*6 - 3,
+                    y:  Math.random()*3 +3
+                }
+            }
+            Firework.prototype.draw=function(){
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                c.fillStyle=this.color;
+                c.fill();
+                c.closePath();
+            }
+            Firework.prototype.update=function(){
+                this.x  +=  this.velocity.x;
+                this.checkMaxY();
+                this.y  -=   this.velocity.y;
+                this.draw();
+            }
+            Firework.prototype.checkMaxY=function(){
+                if(this.y <= this.maxY){
+                    this.life=false;
+                    for (let i = 0; i < 10; i++) {
+                        arrSpark.push(new Spark(this.x, this.y, this.radius, this.color));
+                    }
+                }
+                if(this.x <=0 || this.x >= canvas.width){
+                    this.life=false;
+                    for (let i = 0; i < 10; i++) {
+                        arrSpark.push(new Spark(this.x, this.y, this.radius, this.color));
+                    }
+                }
+            }
+            // end firework
+            
+            //start spark
+            function Spark(x, y, radius, color){
+                this.x=x;
+                this.y=y;
+                this.radius=radius /2;
+                this.color=color;
+                this.timeLife=150;
+                this.velocity={
+                    x:  Math.random()*6 - 3,
+                    y:  Math.random()*3 +3
+                }
+                this.friction=.15;
+            }
+            
+            Spark.prototype.draw=function(){
+                c.beginPath();
+                c.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+                c.fillStyle=this.color;
+                c.fill();
+                c.closePath();
+            }
+            Spark.prototype.update=function(){
+                    this.x  +=  this.velocity.x;
+                    this.velocity.y -= this.friction;
+                    this.y  -=   this.velocity.y;
+                    this.timeLife -=2;
+                    this.draw();
+            }
+
+            var arrFirework=[];
+            var arrSpark=[];
+            function init(){
+                if(arrFirework.length <=20){
+                    arrFirework.push(new Firework());
+                 }
+            }
+            function animate(){
+                window.requestAnimationFrame(animate);
+                c.fillStyle="rgba(0, 0, 0, .1)";
+                c.fillRect(0, 0, canvas.width, canvas.height);
+                init();
+                arrFirework.forEach((item, index)=>{
+                    item.update();
+                    if(!item.life){
+                        arrFirework.splice(index, 1);
+                    }
+                })
+                arrSpark.forEach((s, index)=>{
+                    s.update();
+                    if(s.timeLife <=0 ){
+                        arrSpark.splice(index, 1);
+                    }
+                })
+            }
+            animate();
+
+        })
+    </script>
+</body>
+</html>
