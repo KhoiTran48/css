@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Box-shadow</title>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .box{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 50%;
+            height: 50%;
+            background: red;
+            box-shadow: 1px 2px 20px rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+        .box:before{
+            content:"";
+            position: absolute;
+            left: 0;
+            right:0;
+            bottom: -6px;
+            height: 20px;
+            /* background: green; */
+            box-shadow: 0 1px 1px rgba(0, 0, 0, .2),0 8px 0px -3px #fff,0 9px 1px -3px rgba(0, 0, 0, .2);
+        }
+    </style>
+</head>
+<body>
+    <div class="box">Box-shadow</div>
+</body>
+</html>
