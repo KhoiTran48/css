@@ -14,8 +14,11 @@
         .mt{
             margin-top: 20px;
         }
-        .matched{
-            border:2px solid green;
+        /* .matched{
+            border:5px solid green !important;
+        } */
+        #input{
+            border:5px solid gray ;
         }
     </style>
 </head>
@@ -73,10 +76,11 @@
         var reset = document.querySelector("#reset");
         var message = document.querySelector("#message");
         var matched = false;
+        var originText="";
         const challengeText = [
             'This is the good text',
             'Thinking positive about life',
-            'Pratice is the mother of all skills',
+            'Practice is the mother of all skills',
             'Nothing is impossible',
             'You can only live one, so do what you want',
             'One hundred percent or nothing',
@@ -85,7 +89,8 @@
         var interval;
 
         function randomText() {
-            return challengeText[Math.floor(Math.random() * challengeText.length)]
+            originText= challengeText[Math.floor(Math.random() * challengeText.length)];
+            return originText;
         }
 
         sample.innerHTML = randomText();
@@ -105,7 +110,7 @@
             let res = ['00', '00', '00', '00'];
             timer.innerHTML = `${res[0]} : ${res[1]} : ${res[2]} : ${res[3]}`;
             interval = addInterval();
-            // input.value = "";
+            input.value = "";
             handleClass();
             sample.innerHTML = randomText();
         })
@@ -138,23 +143,33 @@
         }
         function handleClass(isMatched) {
             if (isMatched === true) {
-                input.classList.add('matched');
+                // input.classList.add('matched');
                 message.classList.remove('hide');
             } else {
-                input.classList.remove('matched');
+                // input.classList.remove('matched');
                 message.classList.add('hide');
             }
-            input.value = "";
+            
         }
         input.addEventListener('keyup', (e) => {
-            if (e.target.value === sample.innerHTML) {
+            let enterText=e.target.value;
+            let sampleText = sample.innerHTML;
+            if(sampleText.indexOf(enterText) >= 0){
+                input.style.borderColor='aqua';
+            }else{
+                input.style.borderColor='orange';
+            }
+            if (e.target.value === sampleText) {
+                input.style.borderColor='green';
                 clearInterval(interval);
                 handleClass(true);
+                input.value = "";
                 sample.innerHTML = randomText();
                 matched = true;
             }
             if (e.target.value.length === 1) {
                 if (!interval || matched) {
+                    handleClass();
                     matched = false;
                     interval = addInterval();
                 }
